@@ -1,7 +1,8 @@
-# gt.zsh — LLM provider switcher for Claude Code
+# gt.sh — LLM provider switcher for Claude Code
 # Supports GLM (Z.ai), Kimi (Moonshot), and Claude (Anthropic native)
+# Compatible with both zsh and bash.
 #
-# Usage: source this file in your .zshrc, then run:
+# Usage: source this file in your .zshrc or .bashrc, then run:
 #   gt g   — switch to GLM mode
 #   gt k   — switch to Kimi mode
 #   gt c   — switch to Claude (Anthropic) mode
@@ -54,7 +55,7 @@ gt() {
       export ANTHROPIC_DEFAULT_SONNET_MODEL="$GT_GLM_SONNET_MODEL"
       export ANTHROPIC_DEFAULT_OPUS_MODEL="$GT_GLM_OPUS_MODEL"
       unset ANTHROPIC_MODEL
-      _gt_tmux_sync $_GT_SYNC_VARS[@]
+      _gt_tmux_sync "${_GT_SYNC_VARS[@]}"
       echo "🔹 GLM mode active"
       ;;
 
@@ -67,7 +68,7 @@ gt() {
       export ANTHROPIC_DEFAULT_OPUS_MODEL="$GT_KIMI_MODEL"
       unset ANTHROPIC_VERSION
       unset API_TIMEOUT_MS
-      _gt_tmux_sync $_GT_SYNC_VARS[@]
+      _gt_tmux_sync "${_GT_SYNC_VARS[@]}"
       echo "🟣 Kimi mode active"
       ;;
 
@@ -81,7 +82,7 @@ gt() {
       unset ANTHROPIC_DEFAULT_HAIKU_MODEL
       unset ANTHROPIC_DEFAULT_SONNET_MODEL
       unset ANTHROPIC_DEFAULT_OPUS_MODEL
-      _gt_tmux_sync $_GT_SYNC_VARS[@]
+      _gt_tmux_sync "${_GT_SYNC_VARS[@]}"
       echo "🔸 Claude mode active (Anthropic)"
       ;;
 

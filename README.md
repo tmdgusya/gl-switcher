@@ -1,6 +1,6 @@
 # gt — LLM Provider Switcher for Claude Code
 
-`gt` is a tiny zsh helper that lets you instantly switch Claude Code between different LLM providers (GLM, Kimi, Claude native) from your terminal — including **automatic tmux environment propagation** so spawned teammate panes inherit the right credentials.
+`gt` is a tiny shell helper (zsh & bash) that lets you instantly switch Claude Code between different LLM providers (GLM, Kimi, Claude native) from your terminal — including **automatic tmux environment propagation** so spawned teammate panes inherit the right credentials.
 
 ## Why this exists
 
@@ -22,36 +22,29 @@ Claude Code supports alternative backends via `ANTHROPIC_BASE_URL` and `ANTHROPI
 
 ```bash
 git clone https://github.com/yourname/gt-switcher.git ~/gt-switcher
-# or just download gt.zsh directly
 ```
 
 ### 2. Set your API keys
 
-Either export them before sourcing, or edit the config block at the top of `gt.zsh`:
+Either export them before sourcing, or edit the config block at the top of `gt.sh`:
 
-```zsh
-# In your .zshrc, before sourcing gt.zsh:
+```bash
 export GT_GLM_AUTH_TOKEN="your-z-ai-token"
 export GT_KIMI_AUTH_TOKEN="your-kimi-token"
 ```
 
-Or edit `gt.zsh` directly:
+### 3. Source in your shell rc
 
-```zsh
-GT_GLM_AUTH_TOKEN="your-z-ai-token-here"
-GT_KIMI_AUTH_TOKEN="your-kimi-token-here"
-```
-
-### 3. Source in your `.zshrc`
-
-```zsh
-source ~/gt-switcher/gt.zsh
-```
-
-Then reload:
+Add to `~/.zshrc` or `~/.bashrc`:
 
 ```bash
-source ~/.zshrc
+source ~/gt-switcher/gt.sh
+```
+
+Then reload your shell:
+
+```bash
+exec $SHELL
 ```
 
 ## Usage
@@ -87,7 +80,7 @@ The `_gt_tmux_sync` helper is a no-op when you're not inside a tmux session, so 
 
 Override the default model names via env vars before sourcing:
 
-```zsh
+```bash
 export GT_GLM_HAIKU_MODEL="glm-4.7-flash"
 export GT_GLM_SONNET_MODEL="glm-5"
 export GT_GLM_OPUS_MODEL="glm-5"
@@ -103,6 +96,6 @@ When Claude Code spawns teammate agents in GLM mode, the `--model` flag in the s
 
 ## Requirements
 
-- zsh
+- zsh or bash
 - [tmux](https://github.com/tmux/tmux) (optional — sync is skipped outside tmux)
 - [Claude Code](https://github.com/anthropics/claude-code)
