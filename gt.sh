@@ -13,16 +13,16 @@
 
 # ── User config ────────────────────────────────────────────────────────────────
 # GLM (Z.ai) — https://api.z.ai
-GT_GLM_AUTH_TOKEN="${GT_GLM_AUTH_TOKEN:-your-z-ai-token-here}"
-GT_GLM_BASE_URL="${GT_GLM_BASE_URL:-https://api.z.ai/api/anthropic}"
-GT_GLM_HAIKU_MODEL="${GT_GLM_HAIKU_MODEL:-glm-4.7-flash}"
-GT_GLM_SONNET_MODEL="${GT_GLM_SONNET_MODEL:-glm-4.7}"
-GT_GLM_OPUS_MODEL="${GT_GLM_OPUS_MODEL:-glm-5}"
+GT_GLM_AUTH_TOKEN="${GT_GLM_AUTH_TOKEN:-YOUR_GLM_API_KEY}"
+GT_GLM_BASE_URL="https://api.z.ai/api/anthropic"
+GT_GLM_HAIKU_MODEL="glm-4.7-flash"
+GT_GLM_SONNET_MODEL="glm-5-turbo"
+GT_GLM_OPUS_MODEL="glm-5"
 
 # Kimi (Moonshot) — https://api.kimi.com
-GT_KIMI_AUTH_TOKEN="${GT_KIMI_AUTH_TOKEN:-your-kimi-token-here}"
-GT_KIMI_BASE_URL="${GT_KIMI_BASE_URL:-https://api.kimi.com/coding/}"
-GT_KIMI_MODEL="${GT_KIMI_MODEL:-kimi-k2.5}"
+GT_KIMI_AUTH_TOKEN="${GT_KIMI_AUTH_TOKEN:-YOUR_KIMI_API_KEY}"
+GT_KIMI_BASE_URL="https://api.kimi.com/coding/"
+GT_KIMI_MODEL="kimi-k2.5"
 # ── End user config ────────────────────────────────────────────────────────────
 
 _GT_SYNC_VARS=(ANTHROPIC_AUTH_TOKEN ANTHROPIC_BASE_URL ANTHROPIC_VERSION ANTHROPIC_MODEL
