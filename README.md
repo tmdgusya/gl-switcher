@@ -52,6 +52,7 @@ exec $SHELL
 ```bash
 gt g    # Switch to GLM (Z.ai)
 gt k    # Switch to Kimi (Moonshot)
+gt m    # Switch to MiniMax
 gt c    # Switch to Claude (Anthropic)
 gt s    # Show current mode
 gt      # Same as gt s
@@ -86,6 +87,8 @@ export GT_GLM_SONNET_MODEL="glm-5"
 export GT_GLM_OPUS_MODEL="glm-5"
 
 export GT_KIMI_MODEL="kimi-k2.5"
+
+export GT_MINIMAX_MODEL="MiniMax-M2.7"
 ```
 
 Claude Code reads `ANTHROPIC_DEFAULT_HAIKU_MODEL`, `ANTHROPIC_DEFAULT_SONNET_MODEL`, and `ANTHROPIC_DEFAULT_OPUS_MODEL` to map its internal model tiers to provider-specific model names.
@@ -99,3 +102,6 @@ When Claude Code spawns teammate agents in GLM mode, the `--model` flag in the s
 - zsh or bash
 - [tmux](https://github.com/tmux/tmux) (optional — sync is skipped outside tmux)
 - [Claude Code](https://github.com/anthropics/claude-code)
+(https://github.com/anthropics/claude-code)
+ude-code)
+thropics/claude-code)
