@@ -14,6 +14,7 @@ Claude Code supports alternative backends via `ANTHROPIC_BASE_URL` and `ANTHROPI
 |------|----------|------|
 | `gt g` | [GLM / Z.ai](https://api.z.ai) | `ANTHROPIC_AUTH_TOKEN` |
 | `gt k` | [Kimi / Moonshot](https://api.kimi.com) | `ANTHROPIC_AUTH_TOKEN` |
+| `gt m` | [MiniMax](https://api.minimax.io) | `ANTHROPIC_AUTH_TOKEN` |
 | `gt c` | Anthropic (Claude native) | `~/.claude/` OAuth credentials |
 
 ## Installation
@@ -31,6 +32,7 @@ Either export them before sourcing, or edit the config block at the top of `gt.s
 ```bash
 export GT_GLM_AUTH_TOKEN="your-z-ai-token"
 export GT_KIMI_AUTH_TOKEN="your-kimi-token"
+export GT_MINIMAX_AUTH_TOKEN="your-minimax-token"
 ```
 
 ### 3. Source in your shell rc
@@ -83,12 +85,12 @@ Override the default model names via env vars before sourcing:
 
 ```bash
 export GT_GLM_HAIKU_MODEL="glm-4.7-flash"
-export GT_GLM_SONNET_MODEL="glm-5"
-export GT_GLM_OPUS_MODEL="glm-5"
+export GT_GLM_SONNET_MODEL="glm-5-turbo"
+export GT_GLM_OPUS_MODEL="glm-5.1"
 
 export GT_KIMI_MODEL="kimi-k2.5"
 
-export GT_MINIMAX_MODEL="MiniMax-M2.7"
+export GT_MINIMAX_MODEL="MiniMax-M2.7-highspeed"
 ```
 
 Claude Code reads `ANTHROPIC_DEFAULT_HAIKU_MODEL`, `ANTHROPIC_DEFAULT_SONNET_MODEL`, and `ANTHROPIC_DEFAULT_OPUS_MODEL` to map its internal model tiers to provider-specific model names.
@@ -102,6 +104,3 @@ When Claude Code spawns teammate agents in GLM mode, the `--model` flag in the s
 - zsh or bash
 - [tmux](https://github.com/tmux/tmux) (optional — sync is skipped outside tmux)
 - [Claude Code](https://github.com/anthropics/claude-code)
-(https://github.com/anthropics/claude-code)
-ude-code)
-thropics/claude-code)
