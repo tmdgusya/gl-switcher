@@ -28,7 +28,7 @@ GT_KIMI_MODEL="kimi-k2.5"
 # MiniMax — https://api.minimax.io
 GT_MINIMAX_AUTH_TOKEN="${GT_MINIMAX_AUTH_TOKEN:-YOUR_MINIMAX_API_KEY}"
 GT_MINIMAX_BASE_URL="https://api.minimax.io/anthropic"
-GT_MINIMAX_MODEL="MiniMax-M2.7"
+GT_MINIMAX_MODEL="MiniMax-M2.7-highspeed"
 # ── End user config ────────────────────────────────────────────────────────────
 
 _GT_SYNC_VARS=(ANTHROPIC_AUTH_TOKEN ANTHROPIC_BASE_URL ANTHROPIC_VERSION ANTHROPIC_MODEL
