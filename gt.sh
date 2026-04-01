@@ -18,7 +18,7 @@ GT_GLM_AUTH_TOKEN="${GT_GLM_AUTH_TOKEN:-YOUR_GLM_API_KEY}"
 GT_GLM_BASE_URL="https://api.z.ai/api/anthropic"
 GT_GLM_HAIKU_MODEL="glm-4.7-flash"
 GT_GLM_SONNET_MODEL="glm-5-turbo"
-GT_GLM_OPUS_MODEL="glm-5"
+GT_GLM_OPUS_MODEL="glm-5.1"
 
 # Kimi (Moonshot) — https://api.kimi.com
 GT_KIMI_AUTH_TOKEN="${GT_KIMI_AUTH_TOKEN:-YOUR_KIMI_API_KEY}"
@@ -60,7 +60,7 @@ gt() {
       export ANTHROPIC_DEFAULT_HAIKU_MODEL="$GT_GLM_HAIKU_MODEL"
       export ANTHROPIC_DEFAULT_SONNET_MODEL="$GT_GLM_SONNET_MODEL"
       export ANTHROPIC_DEFAULT_OPUS_MODEL="$GT_GLM_OPUS_MODEL"
-      unset ANTHROPIC_MODEL
+      export ANTHROPIC_MODEL="$GT_GLM_OPUS_MODEL"
       unset CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC
       _gt_tmux_sync "${_GT_SYNC_VARS[@]}"
       echo "🔹 GLM mode active"
