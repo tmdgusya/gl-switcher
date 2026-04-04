@@ -1,11 +1,12 @@
 # gt.sh — LLM provider switcher for Claude Code
-# Supports GLM (Z.ai), Kimi (Moonshot), MiniMax, and Claude (Anthropic native)
+# Supports GLM (Z.ai), Kimi (Moonshot), MiniMax, OpenRouter, and Claude (Anthropic native)
 # Compatible with both zsh and bash.
 #
 # Usage: source this file in your .zshrc or .bashrc, then run:
 #   gt g   — switch to GLM mode
 #   gt k   — switch to Kimi mode
 #   gt m   — switch to MiniMax mode
+#   gt o   — switch to OpenRouter mode
 #   gt c   — switch to Claude (Anthropic) mode
 #   gt s   — show current mode (default)
 #
@@ -29,11 +30,17 @@ GT_KIMI_MODEL="kimi-k2.5"
 GT_MINIMAX_AUTH_TOKEN="${GT_MINIMAX_AUTH_TOKEN:-YOUR_MINIMAX_API_KEY}"
 GT_MINIMAX_BASE_URL="https://api.minimax.io/anthropic"
 GT_MINIMAX_MODEL="MiniMax-M2.7-highspeed"
+
+# OpenRouter — https://openrouter.ai
+GT_OPENROUTER_AUTH_TOKEN="${GT_OPENROUTER_AUTH_TOKEN:-YOUR_OPENROUTER_API_KEY}"
+GT_OPENROUTER_BASE_URL="https://openrouter.ai/api"
+GT_OPENROUTER_MODEL="qwen/qwen3.6-plus:free"
 # ── End user config ────────────────────────────────────────────────────────────
 
-_GT_SYNC_VARS=(ANTHROPIC_AUTH_TOKEN ANTHROPIC_BASE_URL ANTHROPIC_VERSION ANTHROPIC_MODEL
-               API_TIMEOUT_MS ANTHROPIC_DEFAULT_HAIKU_MODEL ANTHROPIC_DEFAULT_SONNET_MODEL
-               ANTHROPIC_DEFAULT_OPUS_MODEL CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC)
+_GT_SYNC_VARS=(ANTHROPIC_AUTH_TOKEN ANTHROPIC_API_KEY ANTHROPIC_BASE_URL ANTHROPIC_VERSION
+               ANTHROPIC_MODEL API_TIMEOUT_MS ANTHROPIC_DEFAULT_HAIKU_MODEL
+               ANTHROPIC_DEFAULT_SONNET_MODEL ANTHROPIC_DEFAULT_OPUS_MODEL
+               CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC)
 
 # Sync named env vars into tmux's global environment so that teammate panes
 # spawned by Claude Code inherit them automatically.
@@ -94,6 +101,21 @@ gt() {
       echo "🟢 MiniMax mode active"
       ;;
 
+    "o")  # OpenRouter mode
+      export ANTHROPIC_AUTH_TOKEN="$GT_OPENROUTER_AUTH_TOKEN"
+      export ANTHROPIC_API_KEY=""
+      export ANTHROPIC_BASE_URL="$GT_OPENROUTER_BASE_URL"
+      export ANTHROPIC_MODEL="$GT_OPENROUTER_MODEL"
+      export API_TIMEOUT_MS="3000000"
+      export CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1
+      export ANTHROPIC_DEFAULT_HAIKU_MODEL="$GT_OPENROUTER_MODEL"
+      export ANTHROPIC_DEFAULT_SONNET_MODEL="$GT_OPENROUTER_MODEL"
+      export ANTHROPIC_DEFAULT_OPUS_MODEL="$GT_OPENROUTER_MODEL"
+      unset ANTHROPIC_VERSION
+      _gt_tmux_sync "${_GT_SYNC_VARS[@]}"
+      echo "🟠 OpenRouter mode active"
+      ;;
+
     "c")  # Claude mode (Anthropic native — uses ~/.claude/ OAuth credentials)
       unset ANTHROPIC_AUTH_TOKEN
       unset ANTHROPIC_API_KEY
@@ -116,16 +138,19 @@ gt() {
         echo "🟣 Current: Kimi ($ANTHROPIC_DEFAULT_SONNET_MODEL)"
       elif [[ "$ANTHROPIC_BASE_URL" == *"minimax"* ]]; then
         echo "🟢 Current: MiniMax ($ANTHROPIC_MODEL)"
+      elif [[ "$ANTHROPIC_BASE_URL" == *"openrouter"* ]]; then
+        echo "🟠 Current: OpenRouter ($ANTHROPIC_MODEL)"
       else
         echo "🔸 Current: Claude (Anthropic)"
       fi
       ;;
 
     *)
-      echo "Usage: gt [g|k|m|c|s]"
+      echo "Usage: gt [g|k|m|o|c|s]"
       echo "  g — GLM mode (Z.ai)"
       echo "  k — Kimi mode (Moonshot)"
       echo "  m — MiniMax mode"
+      echo "  o — OpenRouter mode"
       echo "  c — Claude mode (Anthropic)"
       echo "  s — show current mode (default)"
       ;;
