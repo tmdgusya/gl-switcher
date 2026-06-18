@@ -1,13 +1,13 @@
 # gt.sh — LLM provider switcher for Claude Code
-# Usage: gt [g|k|m|o|c|s]
+# Usage: gt [g|k|m|o|q|c|s]
 
 # ── User config ────────────────────────────────────────────────────────────────
 # GLM (Z.ai) — https://api.z.ai
 GT_GLM_AUTH_TOKEN="${GT_GLM_AUTH_TOKEN:-YOUR_GLM_API_KEY}"
 GT_GLM_BASE_URL="https://api.z.ai/api/anthropic"
-GT_GLM_HAIKU_MODEL="glm-4.7-flash"
-GT_GLM_SONNET_MODEL="glm-5v-turbo"
-GT_GLM_OPUS_MODEL="glm-5.1"
+GT_GLM_HAIKU_MODEL="glm-4.5-air"
+GT_GLM_SONNET_MODEL="glm-5.2[1m]"
+GT_GLM_OPUS_MODEL="glm-5.2[1m]"
 
 # Kimi (Moonshot) — https://api.kimi.com
 GT_KIMI_AUTH_TOKEN="${GT_KIMI_AUTH_TOKEN:-YOUR_KIMI_API_KEY}"
@@ -17,18 +17,28 @@ GT_KIMI_MODEL="kimi-k2.6-code-preview"
 # MiniMax — https://api.minimax.io
 GT_MINIMAX_AUTH_TOKEN="${GT_MINIMAX_AUTH_TOKEN:-YOUR_MINIMAX_API_KEY}"
 GT_MINIMAX_BASE_URL="https://api.minimax.io/anthropic"
-GT_MINIMAX_MODEL="MiniMax-M2.7-highspeed"
+GT_MINIMAX_MODEL="Minimax-M3"
 
 # OpenRouter — https://openrouter.ai
 GT_OPENROUTER_AUTH_TOKEN="${GT_OPENROUTER_AUTH_TOKEN:-YOUR_OPENROUTER_API_KEY}"
 GT_OPENROUTER_BASE_URL="https://openrouter.ai/api"
 GT_OPENROUTER_MODEL="qwen/qwen3.6-plus:free"
+
+# Qwen (Alibaba Model Studio, ap-southeast-1) — https://modelstudio.console.alibabacloud.com
+GT_QWEN_AUTH_TOKEN="${GT_QWEN_AUTH_TOKEN:-YOUR_QWEN_API_KEY}"
+GT_QWEN_BASE_URL="https://dashscope-intl.aliyuncs.com/apps/anthropic"
+GT_QWEN_MODEL="qwen-latest-series-invite-beta-v34"
 # ── End user config ────────────────────────────────────────────────────────────
 
+# CLAUDE_CODE_ATTRIBUTION_HEADER=0 disables the per-request `x-anthropic-billing-header`
+# (added in Claude Code 2.1.36). It changes every request and breaks prompt caching on
+# third-party endpoints. Set =0 for all non-native modes; leave native Claude mode unset
+# so Anthropic still gets usage attribution. (Undocumented var: anthropics/claude-code#24168)
 _GT_SYNC_VARS=(ANTHROPIC_AUTH_TOKEN ANTHROPIC_API_KEY ANTHROPIC_BASE_URL ANTHROPIC_VERSION
                ANTHROPIC_MODEL API_TIMEOUT_MS ANTHROPIC_DEFAULT_HAIKU_MODEL
                ANTHROPIC_DEFAULT_SONNET_MODEL ANTHROPIC_DEFAULT_OPUS_MODEL
-               CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC)
+               CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC CLAUDE_CODE_SUBAGENT_MODEL
+               CLAUDE_CODE_AUTO_COMPACT_WINDOW CLAUDE_CODE_ATTRIBUTION_HEADER)
 
 # Sync named env vars into tmux's global environment so that teammate panes
 # spawned by Claude Code inherit them automatically.
@@ -56,7 +66,10 @@ gt() {
       export ANTHROPIC_DEFAULT_SONNET_MODEL="$GT_GLM_SONNET_MODEL"
       export ANTHROPIC_DEFAULT_OPUS_MODEL="$GT_GLM_OPUS_MODEL"
       export ANTHROPIC_MODEL="$GT_GLM_OPUS_MODEL"
+      export CLAUDE_CODE_AUTO_COMPACT_WINDOW="1000000"
       unset CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC
+      unset CLAUDE_CODE_SUBAGENT_MODEL
+      export CLAUDE_CODE_ATTRIBUTION_HEADER=0
       _gt_tmux_sync "${_GT_SYNC_VARS[@]}"
       echo "GLM mode"
       ;;
@@ -71,6 +84,9 @@ gt() {
       unset ANTHROPIC_VERSION
       unset API_TIMEOUT_MS
       unset CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC
+      unset CLAUDE_CODE_SUBAGENT_MODEL
+      unset CLAUDE_CODE_AUTO_COMPACT_WINDOW
+      export CLAUDE_CODE_ATTRIBUTION_HEADER=0
       _gt_tmux_sync "${_GT_SYNC_VARS[@]}"
       echo "Kimi mode"
       ;;
@@ -85,6 +101,9 @@ gt() {
       export ANTHROPIC_DEFAULT_SONNET_MODEL="$GT_MINIMAX_MODEL"
       export ANTHROPIC_DEFAULT_OPUS_MODEL="$GT_MINIMAX_MODEL"
       unset ANTHROPIC_VERSION
+      unset CLAUDE_CODE_SUBAGENT_MODEL
+      unset CLAUDE_CODE_AUTO_COMPACT_WINDOW
+      export CLAUDE_CODE_ATTRIBUTION_HEADER=0
       _gt_tmux_sync "${_GT_SYNC_VARS[@]}"
       echo "MiniMax mode"
       ;;
@@ -100,8 +119,28 @@ gt() {
       export ANTHROPIC_DEFAULT_SONNET_MODEL="$GT_OPENROUTER_MODEL"
       export ANTHROPIC_DEFAULT_OPUS_MODEL="$GT_OPENROUTER_MODEL"
       unset ANTHROPIC_VERSION
+      unset CLAUDE_CODE_SUBAGENT_MODEL
+      unset CLAUDE_CODE_AUTO_COMPACT_WINDOW
+      export CLAUDE_CODE_ATTRIBUTION_HEADER=0
       _gt_tmux_sync "${_GT_SYNC_VARS[@]}"
       echo "OpenRouter mode"
+      ;;
+
+    "q")  # Qwen mode (Alibaba Model Studio, ap-southeast-1, Pay-as-you-go)
+      export ANTHROPIC_AUTH_TOKEN="$GT_QWEN_AUTH_TOKEN"
+      export ANTHROPIC_BASE_URL="$GT_QWEN_BASE_URL"
+      export ANTHROPIC_MODEL="$GT_QWEN_MODEL"
+      export ANTHROPIC_DEFAULT_HAIKU_MODEL="$GT_QWEN_MODEL"
+      export ANTHROPIC_DEFAULT_SONNET_MODEL="$GT_QWEN_MODEL"
+      export ANTHROPIC_DEFAULT_OPUS_MODEL="$GT_QWEN_MODEL"
+      export CLAUDE_CODE_SUBAGENT_MODEL="$GT_QWEN_MODEL"
+      unset ANTHROPIC_VERSION
+      unset API_TIMEOUT_MS
+      unset CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC
+      unset CLAUDE_CODE_AUTO_COMPACT_WINDOW
+      export CLAUDE_CODE_ATTRIBUTION_HEADER=0
+      _gt_tmux_sync "${_GT_SYNC_VARS[@]}"
+      echo "Qwen mode"
       ;;
 
     "c")  # Claude mode (Anthropic native — uses ~/.claude/ OAuth credentials)
@@ -115,6 +154,9 @@ gt() {
       unset ANTHROPIC_DEFAULT_SONNET_MODEL
       unset ANTHROPIC_DEFAULT_OPUS_MODEL
       unset CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC
+      unset CLAUDE_CODE_SUBAGENT_MODEL
+      unset CLAUDE_CODE_AUTO_COMPACT_WINDOW
+      unset CLAUDE_CODE_ATTRIBUTION_HEADER
       _gt_tmux_sync "${_GT_SYNC_VARS[@]}"
       echo "Claude mode"
       ;;
@@ -128,17 +170,20 @@ gt() {
         echo "MiniMax ($ANTHROPIC_MODEL)"
       elif [[ "$ANTHROPIC_BASE_URL" == *"openrouter"* ]]; then
         echo "OpenRouter ($ANTHROPIC_MODEL)"
+      elif [[ "$ANTHROPIC_BASE_URL" == *"dashscope"* ]]; then
+        echo "Qwen ($ANTHROPIC_MODEL)"
       else
         echo "Claude (Anthropic)"
       fi
       ;;
 
     *)
-      echo "Usage: gt [g|k|m|o|c|s]"
+      echo "Usage: gt [g|k|m|o|q|c|s]"
       echo "  g — GLM mode (Z.ai)"
       echo "  k — Kimi mode (Moonshot)"
       echo "  m — MiniMax mode"
       echo "  o — OpenRouter mode"
+      echo "  q — Qwen mode (Alibaba Model Studio)"
       echo "  c — Claude mode (Anthropic)"
       echo "  s — show current mode (default)"
       ;;
